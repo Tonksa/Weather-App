@@ -52,6 +52,7 @@ export default function WeatherItem(props) {
     // if (cod == 404) {
         
     // }
+    
 
     return(
         <div>
