@@ -11,11 +11,8 @@ import WeatherItem from "./components/WeatherItem";
  * use the useEffect hook to set the apiData to the object that has just been returned
  */
 
-// Next steps are to fix the error in the WeatherItem component. The issue is to do with getting an array from an asynchronous object.
-// A solution is to declare an empty array of all the object keys we need, but it's not great...
-
 export default function WeatherApp() {
-    const apikey = 'b1f11b4d3f0df01f841aefb86efe6d47'
+    const apikey = 'e29b1a270358451c10aab37f7fe1e503'
     const [ cityData, setCityData ] = useState({
         input: '',
         cityToSearchFor: 'Street'
@@ -27,8 +24,6 @@ export default function WeatherApp() {
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityData.cityToSearchFor}&appid=${apikey}`)
             .then((response) => response.json())
             .then(data => setApiData(data))
-
-        console.log('api hit')
 
     }, [cityData.cityToSearchFor])
 
@@ -42,16 +37,18 @@ export default function WeatherApp() {
             }
         })
 
-        clearTimeout(timer)
-        const cityNameChangeTimer = setTimeout(() => {
-            setCityData((prevData) => {
-                return {
-                    ...prevData,
-                    cityToSearchFor: value
-                }
-            })
-        }, 1000)
-        setTimer(cityNameChangeTimer)
+        if (value != '') {
+            clearTimeout(timer)
+            const cityNameChangeTimer = setTimeout(() => {
+                setCityData((prevData) => {
+                    return {
+                        ...prevData,
+                        cityToSearchFor: value
+                    }
+                })
+            }, 1000)
+            setTimer(cityNameChangeTimer)
+        }
     }
 
     function handleSubmit(e) {

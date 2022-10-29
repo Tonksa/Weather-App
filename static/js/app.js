@@ -28,11 +28,8 @@ __webpack_require__.r(__webpack_exports__);
  * use the useEffect hook to set the apiData to the object that has just been returned
  */
 
-// Next steps are to fix the error in the WeatherItem component. The issue is to do with getting an array from an asynchronous object.
-// A solution is to declare an empty array of all the object keys we need, but it's not great...
-
 function WeatherApp() {
-  const apikey = 'b1f11b4d3f0df01f841aefb86efe6d47';
+  const apikey = 'e29b1a270358451c10aab37f7fe1e503';
   const [cityData, setCityData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
     input: '',
     cityToSearchFor: 'Street'
@@ -41,7 +38,6 @@ function WeatherApp() {
   const [timer, setTimer] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityData.cityToSearchFor}&appid=${apikey}`).then(response => response.json()).then(data => setApiData(data));
-    console.log('api hit');
   }, [cityData.cityToSearchFor]);
   function handleInputChange(e) {
     const {
@@ -53,16 +49,18 @@ function WeatherApp() {
         input: value
       };
     });
-    clearTimeout(timer);
-    const cityNameChangeTimer = setTimeout(() => {
-      setCityData(prevData => {
-        return {
-          ...prevData,
-          cityToSearchFor: value
-        };
-      });
-    }, 1000);
-    setTimer(cityNameChangeTimer);
+    if (value != '') {
+      clearTimeout(timer);
+      const cityNameChangeTimer = setTimeout(() => {
+        setCityData(prevData => {
+          return {
+            ...prevData,
+            cityToSearchFor: value
+          };
+        });
+      }, 1000);
+      setTimer(cityNameChangeTimer);
+    }
   }
   function handleSubmit(e) {
     e.preventDefault();
@@ -145,14 +143,15 @@ function WeatherItem(props) {
     name,
     weather
   } = props.data;
-  console.log(weather);
-  // const icon = `http://openweathermap.org/img/wn/${weather.icon}@2x.png`
-
-  // if (cod == 404) {
-
-  // }
-
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", null, name));
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "weatheritem"
+  }, cod != 404 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
+    className: "weatheritem__city"
+  }, name), weather && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "weatheritem__weather"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, weather[0].main), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, weather[0].description), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
+    src: `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`
+  }))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "City not found!")));
 }
 
 /***/ }),

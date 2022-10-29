@@ -46,20 +46,26 @@ let example = {
 
 export default function WeatherItem(props) {
     const { cod, name, weather } = props.data
-    console.log(weather)
-    // const icon = `http://openweathermap.org/img/wn/${weather.icon}@2x.png`
-
-    // if (cod == 404) {
-        
-    // }
-    
 
     return(
-        <div>
-            <h3>{name}</h3>
-            {/* <p>{weather.main}</p>
-            <p>{weather.description}</p> */}
-            {/* <img src={icon} /> */}
+        <div className="weatheritem">
+            {cod != 404
+                ?
+                <>
+                    <h3 className="weatheritem__city">{name}</h3>
+                    {weather &&
+                        <div className="weatheritem__weather">
+                            <p>{weather[0].main}</p>
+                            <p>{weather[0].description}</p>
+                            <img src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`} />
+                        </div>
+                    }
+                </>
+                :
+                <>
+                    <p>City not found!</p>
+                </>
+            }
         </div>
     )
 }
