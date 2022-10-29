@@ -45,19 +45,19 @@ let example = {
 }
 
 export default function WeatherItem(props) {
-    const { cod, name, weather } = props.data
+    const { cod, name, weather, sys } = props.data
 
     return(
         <div className="weatheritem">
             {cod != 404
                 ?
                 <>
-                    <h3 className="weatheritem__city">{name}</h3>
+                    <h3 className="weatheritem__city">{name} - {sys && sys.country}</h3>
                     {weather &&
                         <div className="weatheritem__weather">
+                            <img src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`} />
                             <p>{weather[0].main}</p>
                             <p>{weather[0].description}</p>
-                            <img src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`} />
                         </div>
                     }
                 </>

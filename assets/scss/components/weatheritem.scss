@@ -1,0 +1,28 @@
+.weatheritem {
+    padding: 15px;
+    text-align: center;
+    
+    &__wrapper {
+        position: relative;
+        margin: auto;
+        border: 3px solid $borderColor;
+        border-radius: $borderRadius;
+        background-color: $blue;
+    }
+
+    &__weather {
+        * {
+            margin: $elGap * 0.5;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        img {
+            background-color: #fff;
+            border: 3px solid $borderColor;
+            border-radius: $borderRadius;
+        }
+    }
+}

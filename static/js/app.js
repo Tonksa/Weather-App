@@ -15,6 +15,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _components_WeatherItem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/WeatherItem */ "./js/components/WeatherItem.js");
+/* harmony import */ var _components_Spinner__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Spinner */ "./js/components/Spinner.js");
+
 
 
 
@@ -36,9 +38,24 @@ function WeatherApp() {
   });
   const [apiData, setApiData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({});
   const [timer, setTimer] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [spinnerIsVisible, setSpinnerIsVisible] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [inputTimer, setInputTimer] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const countdownFrom = 2000;
+  const barStyles = {
+    marginLeft: `-100%`,
+    transition: `all ${countdownFrom}ms linear`
+  };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityData.cityToSearchFor}&appid=${apikey}`).then(response => response.json()).then(data => setApiData(data));
+    setSpinnerIsVisible(false);
+    setInputTimer(false);
   }, [cityData.cityToSearchFor]);
+  function resetInputTimer() {
+    setInputTimer(false);
+    setTimeout(() => {
+      setInputTimer(true);
+    }, 0);
+  }
   function handleInputChange(e) {
     const {
       value
@@ -50,6 +67,7 @@ function WeatherApp() {
       };
     });
     if (value != '') {
+      resetInputTimer();
       clearTimeout(timer);
       const cityNameChangeTimer = setTimeout(() => {
         setCityData(prevData => {
@@ -58,23 +76,61 @@ function WeatherApp() {
             cityToSearchFor: value
           };
         });
-      }, 1000);
+        setSpinnerIsVisible(true);
+      }, countdownFrom);
       setTimer(cityNameChangeTimer);
     }
   }
   function handleSubmit(e) {
     e.preventDefault();
   }
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "Test"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "Weather App"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "weatherapp__wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", {
     onSubmit: handleSubmit
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "input__wrapper"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
     type: "text",
-    placeholder: "City...",
+    placeholder: "Enter a City!",
     name: "city",
     value: cityData.input,
-    onChange: handleInputChange
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_WeatherItem__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    onChange: handleInputChange,
+    className: "input"
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    className: "bar__wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    className: `bar${inputTimer ? ' bar--active' : ''}`,
+    style: inputTimer ? barStyles : {}
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "weatheritem__wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_WeatherItem__WEBPACK_IMPORTED_MODULE_1__["default"], {
     data: apiData
+  }), spinnerIsVisible && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Spinner__WEBPACK_IMPORTED_MODULE_2__["default"], null))));
+}
+
+/***/ }),
+
+/***/ "./js/components/Spinner.js":
+/*!**********************************!*\
+  !*** ./js/components/Spinner.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Spinner)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+function Spinner() {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "spinner__wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "spinner"
   }));
 }
 
@@ -141,17 +197,18 @@ function WeatherItem(props) {
   const {
     cod,
     name,
-    weather
+    weather,
+    sys
   } = props.data;
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "weatheritem"
   }, cod != 404 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
     className: "weatheritem__city"
-  }, name), weather && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, name, " - ", sys && sys.country), weather && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "weatheritem__weather"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, weather[0].main), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, weather[0].description), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
     src: `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`
-  }))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "City not found!")));
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, weather[0].main), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, weather[0].description))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "City not found!")));
 }
 
 /***/ }),
@@ -33636,7 +33693,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_2__.createRoot)(document.querySelector('#test'));
+const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_2__.createRoot)(document.querySelector('#weatherapp'));
 root.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(_WeatherApp_js__WEBPACK_IMPORTED_MODULE_3__["default"], null));
 })();
 

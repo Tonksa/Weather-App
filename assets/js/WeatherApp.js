@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import WeatherItem from "./components/WeatherItem";
+import Spinner from "./components/Spinner";
 
 // https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API}
 // https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API key}
@@ -11,25 +12,44 @@ import WeatherItem from "./components/WeatherItem";
  * use the useEffect hook to set the apiData to the object that has just been returned
  */
 
+// Worth tidying up some of the useStates here - maybe make them easier to read
+
 export default function WeatherApp() {
     const apikey = 'e29b1a270358451c10aab37f7fe1e503'
     const [ cityData, setCityData ] = useState({
         input: '',
-        cityToSearchFor: 'Street'
+        cityToSearchFor: 'Street',
     })
     const [ apiData, setApiData ] = useState({})
     const [ timer, setTimer ] = useState(null)
+    const [ spinnerIsVisible, setSpinnerIsVisible ] = useState(true)
+    const [ inputTimer, setInputTimer ] = useState(false)
+    const countdownFrom = 2000
+
+    const barStyles = {
+        marginLeft: `-100%`,
+        transition: `all ${countdownFrom}ms linear`
+    }
 
     useEffect(() => {
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityData.cityToSearchFor}&appid=${apikey}`)
             .then((response) => response.json())
             .then(data => setApiData(data))
+        
+            setSpinnerIsVisible(false)
+            setInputTimer(false)
 
     }, [cityData.cityToSearchFor])
 
+    function resetInputTimer() {
+        setInputTimer(false)
+        setTimeout(() => {
+            setInputTimer(true)
+        }, 0);
+    }
+
     function handleInputChange(e) {
         const { value } = e.target
-
         setCityData((prevData) => {
             return {
                 ...prevData,
@@ -38,6 +58,8 @@ export default function WeatherApp() {
         })
 
         if (value != '') {
+            resetInputTimer()
+            
             clearTimeout(timer)
             const cityNameChangeTimer = setTimeout(() => {
                 setCityData((prevData) => {
@@ -46,7 +68,8 @@ export default function WeatherApp() {
                         cityToSearchFor: value
                     }
                 })
-            }, 1000)
+                setSpinnerIsVisible(true)
+            }, countdownFrom)
             setTimer(cityNameChangeTimer)
         }
     }
@@ -56,21 +79,36 @@ export default function WeatherApp() {
     }
 
     return(
-        <div>
-            <h1>Test</h1>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="City..."
-                    name="city"
-                    value={cityData.input}
-                    onChange={handleInputChange}
-                />
-            </form>
+        <div className="container">
+            <h1>Weather App</h1>
+            <div className="weatherapp__wrapper">
+                <form onSubmit={handleSubmit}>
+                    <div className="input__wrapper">
+                        <input
+                            type="text"
+                            placeholder="Enter a City!"
+                            name="city"
+                            value={cityData.input}
+                            onChange={handleInputChange}
+                            className="input"
+                        />
+                    </div>
+                </form>
 
-            <WeatherItem
-                data={apiData}
-                />
+                <span className="bar__wrapper">
+                    <span
+                        className={`bar${inputTimer ? ' bar--active' : ''}`}
+                        style={inputTimer ? barStyles : {}}
+                    ></span>
+                </span>
+
+                <div className="weatheritem__wrapper">
+                    <WeatherItem
+                        data={apiData}
+                        />
+                    {spinnerIsVisible && <Spinner />}
+                </div>
+            </div>
         </div>
     )
 }

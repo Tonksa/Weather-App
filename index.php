@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./static/css/app.css">
 </head>
 <body>
-    <div id="test"></div>
+    <div id="weatherapp"></div>
     <script type="text/javascript" src="./static/js/app.js"></script>
 </body>
 </html>
