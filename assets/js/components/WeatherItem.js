@@ -1,51 +1,22 @@
 import React from "react";
 
-// https://openweathermap.org/weather-conditions
-
-let example = {
-    "coord": {
-        "lon": -2.74,
-        "lat": 51.1247
-    },
-    "weather": [{
-        "id": 803,
-        "main": "Clouds",
-        "description": "broken clouds",
-        "icon": "04n"
-    }],
-    "base": "stations",
-    "main": {
-        "temp": 290.2,
-        "feels_like": 290.31,
-        "temp_min": 289.29,
-        "temp_max": 291.44,
-        "pressure": 1012,
-        "humidity": 90
-    },
-    "visibility": 10000,
-    "wind": {
-        "speed": 4.12,
-        "deg": 170
-    },
-    "clouds": {
-        "all": 75
-    },
-    "dt": 1666902760,
-    "sys": {
-        "type": 2,
-        "id": 2020646,
-        "country": "GB",
-        "sunrise": 1666853662,
-        "sunset": 1666889705
-    },
-    "timezone": 3600,
-    "id": 2636671,
-    "name": "Street",
-    "cod": 200
-}
-
 export default function WeatherItem(props) {
-    const { cod, name, weather, sys } = props.data
+    const { cod, name, weather, sys, main, clouds } = props.data
+    const { citySearched } = props
+
+    function formatDate(timestamp) {
+        let unix_timestamp = timestamp
+        var date = new Date(unix_timestamp * 1000)
+        var hours = date.getHours()
+        var minutes = "0" + date.getMinutes()
+        var seconds = "0" + date.getSeconds()
+        var formattedTime = hours.toString().padStart(2, "0") + ':' + minutes.substr(-2)
+        return formattedTime
+    }
+
+    function kelvinToCelcius(temp) {
+        return (temp - 273.15).toFixed(0) + '\u00B0C'
+    }
 
     return(
         <div className="weatheritem">
@@ -54,16 +25,25 @@ export default function WeatherItem(props) {
                 <>
                     <h3 className="weatheritem__city">{name} - {sys && sys.country}</h3>
                     {weather &&
-                        <div className="weatheritem__weather">
+                        <div className="weatheritem__info">
                             <img src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`} />
-                            <p>{weather[0].main}</p>
-                            <p>{weather[0].description}</p>
+                            <p><b>Weather:</b> {weather[0].main}</p>
+                            <p><b>Temperature:</b> {kelvinToCelcius(main.temp)}</p>
+                            {clouds.all != 0 && <p><b>Cloudiness:</b> {clouds.all}%</p>}
+                            <p><b>Humidity:</b> {main.humidity}%</p>
+                            {sys &&
+                                <>
+                                    <hr/>
+                                    <p><b>Sunrise:</b> {formatDate(sys.sunrise)}</p>
+                                    <p><b>Sunset:</b> {formatDate(sys.sunset)}</p>
+                                </>
+                            }
                         </div>
                     }
                 </>
                 :
                 <>
-                    <p>City not found!</p>
+                    <p className="weatheritem__error"><span className="weatheritem__error__city"><b>{citySearched}</b></span> not found, try another search!</p>
                 </>
             }
         </div>

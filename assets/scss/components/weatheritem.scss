@@ -10,9 +10,9 @@
         background-color: $blue;
     }
 
-    &__weather {
+    &__info {
         * {
-            margin: $elGap * 0.5;
+            margin: $elGap * 0.5 0;
 
             &:last-child {
                 margin-bottom: 0;
@@ -21,8 +21,16 @@
 
         img {
             background-color: #fff;
-            border: 3px solid $borderColor;
             border-radius: $borderRadius;
+        }
+    }
+
+    &__error {
+        margin: 0;
+        font-size: 20px;
+
+        &__city {
+            text-transform: capitalize;
         }
     }
 }

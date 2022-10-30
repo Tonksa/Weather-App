@@ -20,15 +20,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API}
-// https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API key}
-
 /** Functionality
  * On input change ensure that react updates the input box
  * After x seconds, using timouts, set the cityName to be the value of the country input field
  * Add cityName to useEffect dependencies
  * use the useEffect hook to set the apiData to the object that has just been returned
  */
+
+// Worth tidying up some of the useStates here - maybe make them easier to read
 
 function WeatherApp() {
   const apikey = 'e29b1a270358451c10aab37f7fe1e503';
@@ -46,9 +45,11 @@ function WeatherApp() {
     transition: `all ${countdownFrom}ms linear`
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityData.cityToSearchFor}&appid=${apikey}`).then(response => response.json()).then(data => setApiData(data));
-    setSpinnerIsVisible(false);
-    setInputTimer(false);
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityData.cityToSearchFor}&appid=${apikey}`).then(response => response.json()).then(data => {
+      setApiData(data);
+      setSpinnerIsVisible(false);
+      setInputTimer(false);
+    });
   }, [cityData.cityToSearchFor]);
   function resetInputTimer() {
     setInputTimer(false);
@@ -86,7 +87,9 @@ function WeatherApp() {
   }
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "container"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "Weather App"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "weatherapp__content"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "Weather App"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "Enter any City or Country to find out the weather!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "weatherapp__wrapper"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", {
     onSubmit: handleSubmit
@@ -107,8 +110,9 @@ function WeatherApp() {
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "weatheritem__wrapper"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_WeatherItem__WEBPACK_IMPORTED_MODULE_1__["default"], {
-    data: apiData
-  }), spinnerIsVisible && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Spinner__WEBPACK_IMPORTED_MODULE_2__["default"], null))));
+    data: apiData,
+    citySearched: cityData.cityToSearchFor
+  }), spinnerIsVisible && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Spinner__WEBPACK_IMPORTED_MODULE_2__["default"], null)))));
 }
 
 /***/ }),
@@ -198,17 +202,38 @@ function WeatherItem(props) {
     cod,
     name,
     weather,
-    sys
+    sys,
+    main,
+    clouds
   } = props.data;
+  const {
+    citySearched
+  } = props;
+  function formatDate(timestamp) {
+    let unix_timestamp = timestamp;
+    var date = new Date(unix_timestamp * 1000);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    var formattedTime = hours.toString().padStart(2, "0") + ':' + minutes.substr(-2);
+    return formattedTime;
+  }
+  function kelvinToCelcius(temp) {
+    return (temp - 273.15).toFixed(0) + '\u00B0C';
+  }
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "weatheritem"
   }, cod != 404 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
     className: "weatheritem__city"
   }, name, " - ", sys && sys.country), weather && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "weatheritem__weather"
+    className: "weatheritem__info"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
     src: `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, weather[0].main), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, weather[0].description))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "City not found!")));
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "Weather:"), " ", weather[0].main), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "Temperature:"), " ", kelvinToCelcius(main.temp)), clouds.all != 0 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "Cloudiness:"), " ", clouds.all, "%"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "Humidity:"), " ", main.humidity, "%"), sys && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "Sunrise:"), " ", formatDate(sys.sunrise)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "Sunset:"), " ", formatDate(sys.sunset))))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    className: "weatheritem__error"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    className: "weatheritem__error__city"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, citySearched)), " not found, try another search!")));
 }
 
 /***/ }),

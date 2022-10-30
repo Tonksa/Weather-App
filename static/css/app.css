@@ -10785,16 +10785,22 @@ textarea.form-control-lg {
   border-radius: 5px;
   background-color: #C5EAEE;
 }
-.weatheritem__weather * {
-  margin: 7.5px;
+.weatheritem__info * {
+  margin: 7.5px 0;
 }
-.weatheritem__weather *:last-child {
+.weatheritem__info *:last-child {
   margin-bottom: 0;
 }
-.weatheritem__weather img {
+.weatheritem__info img {
   background-color: #fff;
-  border: 3px solid #D8CBB7;
   border-radius: 5px;
+}
+.weatheritem__error {
+  margin: 0;
+  font-size: 20px;
+}
+.weatheritem__error__city {
+  text-transform: capitalize;
 }
 
 .spinner {
@@ -10863,10 +10869,13 @@ h1, .h1 {
   margin-bottom: 15px;
 }
 
-.weatherapp__wrapper {
-  position: relative;
+.weatherapp__content {
   max-width: 500px;
   margin: auto;
+  text-align: center;
+}
+.weatherapp__inner {
+  position: relative;
 }
 
 form {
@@ -10881,6 +10890,9 @@ form {
   border-radius: 5px;
   width: 100%;
   text-transform: capitalize;
+}
+.input::placeholder {
+  text-transform: initial;
 }
 .input__wrapper {
   max-width: 230px;

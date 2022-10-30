@@ -31,10 +31,14 @@ h1 {
 }
 
 .weatherapp {
-    &__wrapper {
-        position: relative;
+    &__content {
         max-width: 500px;
         margin: auto;
+        text-align: center;
+    }
+
+    &__inner {
+        position: relative;
     }
 }
 
@@ -50,6 +54,10 @@ form {
     border-radius: $borderRadius;
     width: 100%;
     text-transform: capitalize;
+
+    &::placeholder {
+        text-transform: initial;
+    }
 
     &__wrapper {
         max-width: 230px;
